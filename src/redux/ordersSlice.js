@@ -10,7 +10,8 @@ const initialState = {
       status: "In Progress", 
       dueDate: "2025-01-15", 
       priority: "High",
-      assignedTeamMember: "Alice"   //   Example assigned member
+      assignedTeamMember: "Alice",
+      image: null
     },
     { 
       id: "ORD-002", 
@@ -20,7 +21,8 @@ const initialState = {
       status: "In Progress", 
       dueDate: "2025-01-18", 
       priority: "Medium",
-      assignedTeamMember: "Bob"
+      assignedTeamMember: "Bob",
+      image: null
     },
     { 
       id: "ORD-003", 
@@ -30,7 +32,8 @@ const initialState = {
       status: "Delayed", 
       dueDate: "2025-01-12", 
       priority: "High",
-      assignedTeamMember: "Charlie"
+      assignedTeamMember: "Charlie",
+      image: null
     },
   ],
 };
@@ -41,10 +44,17 @@ const ordersSlice = createSlice({
   reducers: {
     addOrder: (state, action) => {
       const newId = `ORD-${String(state.orders.length + 1).padStart(3, "0")}`;
+      
+      let imageUrl = null;
+      if (action.payload.image instanceof File) {
+        imageUrl = URL.createObjectURL(action.payload.image);
+      }
+
       state.orders.push({ 
         id: newId, 
-        assignedTeamMember: action.payload.assignedTeamMember || "Unassigned", //   Default if missing
-        ...action.payload 
+        assignedTeamMember: action.payload.assignedTeamMember || "Unassigned",
+        ...action.payload,
+        image: imageUrl
       });
     },
     updateAssignedTeamMember: (state, action) => {

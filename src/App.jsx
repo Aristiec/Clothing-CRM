@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import Login from "./pages/Login";
-import SignUp from "./pages/SignUp"; //   import SignUp page
+import SignUp from "./pages/SignUp"; 
 import Layout from "./layouts/Layout";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeamDashboard from "./pages/TeamDashboard";
@@ -17,6 +17,10 @@ import AddTeamForm from "./components/AddTeamForm";
 import ProgressTracker from "./components/ProgressTracker";
 import TrackOrders from "./pages/TrackOrders";
 import Users from "./pages/Users";
+import AlertsReminders from "./pages/AlertsReminders";
+import Support from "./pages/Support";
+import EmailOrderDetails from "./pages/EmailOrderDetails/EmailOrderDetails";
+
 function App() {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
@@ -55,7 +59,9 @@ function App() {
     <Routes>
       {/* Public Routes */}
       <Route path="/login" element={<Login onLogin={handleLogin} />} />
-      <Route path="/signup" element={<SignUp />} /> {/*   New SignUp route */}
+      <Route path="/signup" element={<SignUp />} /> 
+      <Route path="/email-detail-order" element={<EmailOrderDetails />}/>
+
       {/* Protected Routes */}
       {isAuthenticated ? (
         <Route element={<Layout user={user} onLogout={handleLogout} />}>
@@ -96,6 +102,8 @@ function App() {
             element={<TrackOrders userRole="admin" />}
           />
           <Route path="/admin/users" element={<Users userRole="admin" />} />
+          {/* Admin Profile */}
+          <Route path="/admin/profile" element={<Profile user={user} />} />
 
           {/* Team Routes */}
           <Route path="/team/dashboard" element={<TeamDashboard />} />
@@ -114,8 +122,12 @@ function App() {
           />
           <Route path="/team/clients" element={<Clients />} />
           <Route path="/team/teams" element={<Teams />} />
+          <Route path="/team/alerts" element={<AlertsReminders />} />
+          <Route path="/team/support" element={<Support />} />
+          {/* Team Profile */}
+          <Route path="/team/profile" element={<Profile user={user} />} />
 
-          {/* Shared */}
+          {/* Shared fallback profile (optional) */}
           <Route path="/profile" element={<Profile user={user} />} />
         </Route>
       ) : (

@@ -3,6 +3,7 @@ import ordersReducer from "./ordersSlice";
 import clientsReducer from "./clientsSlice";
 import teamReducer from "./teamSlice";
 import usersReducer from "./userSlice"; 
+import notificationsReducer from "./notificationsSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     clients:clientsReducer, 
     teams: teamReducer,
     users:usersReducer, 
+    notifications: notificationsReducer
   },
 });
 

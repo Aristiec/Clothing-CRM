@@ -1,22 +1,19 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   Plus,
   Search,
-  Filter,
   User,
-  Mail,
-  Phone,
   Eye,
   Edit,
-  Calendar,
+  X,
 } from "lucide-react";
 
 const Clients = ({ userRole }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All"); // optional if you want filters
+  const [selectedClient, setSelectedClient] = useState(null); 
   const navigate = useNavigate();
 
   const clients = useSelector((state) => state.clients.clients);
@@ -157,11 +154,13 @@ const Clients = ({ userRole }) => {
                   {/* Actions */}
                   <td className="px-3 py-2 whitespace-nowrap">
                     <div className="flex justify-center gap-2">
-                      <Link to={`/${userRole}/clients/${client.id}`}>
-                        <button className="p-1.5 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
-                          <Eye className="h-4 w-4" />
-                        </button>
-                      </Link>
+                      {/* 👇 show popup instead of navigating */}
+                      <button
+                        onClick={() => setSelectedClient(client)}
+                        className="p-1.5 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
 
                       {userRole === "admin" && (
                         <button className="p-1.5 rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200 transition">
@@ -176,6 +175,90 @@ const Clients = ({ userRole }) => {
           </tbody>
         </table>
       </div>
+
+      {/* Popup Modal */}
+      <AnimatePresence>
+        {selectedClient && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4"
+            onClick={() => setSelectedClient(null)} // click outside to close
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 220, damping: 18 }}
+              className="bg-white rounded-xl shadow-xl w-full max-w-lg p-5 sm:p-6 relative"
+              onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setSelectedClient(null)}
+                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              {/* Header */}
+              <div className="mb-4 text-center">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {selectedClient.name}
+                </h2>
+                <p className="text-gray-500 text-xs">Client Information</p>
+              </div>
+
+              {/* Details */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
+                <div className="space-y-1.5">
+                  <p>
+                    <span className="font-medium">ID:</span> {selectedClient.id}
+                  </p>
+                  <p>
+                    <span className="font-medium">Email:</span>{" "}
+                    {selectedClient.email}
+                  </p>
+                  <p>
+                    <span className="font-medium">Phone:</span>{" "}
+                    {selectedClient.phone}
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <p>
+                    <span className="font-medium">Address:</span>{" "}
+                    {selectedClient.address}
+                  </p>
+                  <p>
+                    <span className="font-medium">Orders:</span>{" "}
+                    {selectedClient.orders}
+                  </p>
+                  <p>
+                    <span className="font-medium">Total Spent:</span>{" "}
+                    {selectedClient.totalSpent}
+                  </p>
+                  <p>
+                    <span className="font-medium">Last Order:</span>{" "}
+                    {selectedClient.lastOrder}
+                  </p>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setSelectedClient(null)}
+                  className="bg-gradient-to-r from-[#04203E] to-[#06345f] text-white px-4 py-2 rounded-lg text-sm font-medium shadow hover:shadow-md transition"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
